@@ -5,10 +5,10 @@ import mockData from '@/assets/data.json';
 import { Data } from '@/types';
 
 const useDataQuery = (useMockData: boolean) => {
-  const mockFn = async (): Promise<unknown> => {
+  const mockFn = async (): Promise<Data> => {
     return new Promise((resolve) => {
       setTimeout(() => {
-        resolve(mockData);
+        resolve(mockData as Data);
       }, 500);
     });
   };
@@ -16,14 +16,14 @@ const useDataQuery = (useMockData: boolean) => {
   const fetchFn = async (): Promise<Data> => {
     try {
       const url = `http://localhost:5000/api/Data`;
-      const res = await axios.get(url);
-      return res.data;
+      const { data } = await axios.get(url);
+      return data;
     } catch (e) {
       throw e;
     }
   };
 
-  return useQuery('data', useMockData ? mockFn : fetchFn);
+  return useQuery('data', useMockData ? mockFn : fetchFn, { refetchOnMount: false });
 };
 
 export default useDataQuery;
