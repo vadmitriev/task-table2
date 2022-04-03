@@ -21,6 +21,8 @@ import {
   Title,
   Tooltip,
   Legend,
+  Filler,
+  ChartOptions,
 } from 'chart.js';
 import { Line } from 'react-chartjs-2';
 
@@ -28,16 +30,14 @@ import { randomRGB, RGBAFromRGB } from '@/utils/colors';
 
 type Series = {
   name: string;
-  // data: string[] | number[];
-  data: any[];
+  data: string[] | number[];
+  // data: any[];
 };
 
 interface LineChartProps {
   series: Series[];
   xAxisData: any[];
-  stacked: boolean;
-  yTitle?: string;
-  xTitle?: string;
+  stacked?: boolean;
 }
 
 ChartJS.register(
@@ -48,25 +48,20 @@ ChartJS.register(
   Title,
   Tooltip,
   Legend,
+  Filler,
 );
 
 const LineChart: React.FC<LineChartProps> = ({
   series = [],
   xAxisData = [],
   stacked = false,
-  yTitle,
-  xTitle,
 }) => {
-  const chartOptions = {
+  const chartOptions: ChartOptions = {
     responsive: true,
     plugins: {
       legend: {
         position: 'top',
       },
-      // title: {
-      //   display: true,
-      //   text: title
-      // }
     },
     interaction: {
       mode: 'index',
@@ -79,7 +74,7 @@ const LineChart: React.FC<LineChartProps> = ({
   };
 
   const data = {
-    labels: xAxisData,
+    labels: xAxisData.sort((a, b) => a - b),
     datasets: series.map((s, idx) => {
       const color = randomRGB();
       const rgba = RGBAFromRGB(color, 0.5);
@@ -89,25 +84,12 @@ const LineChart: React.FC<LineChartProps> = ({
         data: s.data,
         borderColor: color,
         backgroundColor: rgba,
+        fill: stacked,
       };
     }),
   };
 
-  // b@ts-ignore
-  const chartOptions1: {
-    responsive: boolean;
-    plugins: { legend: { position: string } };
-    interaction: { mode: string };
-    scales: { y: { stacked: boolean } };
-  };
-
-  // TS2322: Type '{
-  //  responsive: boolean;
-  //  plugins: { legend: { position: string; }; };
-  //  interaction: { mode: string; };
-  //  scales: { y: { stacked: boolean; }; }; }'
-  //  is not assignable to type '_DeepPartialObject<CoreChartOptions<"line"> & ElementChartOptions<"line"> & PluginChartOptions<"line"> & DatasetChartOptions<"line"> & ScaleChartOptions<...> & LineControllerChartOptions>'.   The types of 'interaction.mode' are incompatible between these types.     Type 'string' is not assignable to type '"index" | "x" | "y" | "dataset" | "point" | "nearest" | undefined'.
-
+  // @ts-ignore
   return <Line options={chartOptions} data={data} />;
 };
 

@@ -5,32 +5,22 @@ import {
   Typography,
   styled,
   Grid,
-  Paper,
   Card,
 } from '@mui/material';
+
+import useDataQuery from '@/hooks/useDataQuery';
+import { LineChart, Spinner } from '@/components';
 
 import {
   transformDataForAreaChart,
   transformDataForLineChart,
 } from '@/utils/transformData';
-import useDataQuery from '@/hooks/useDataQuery';
-import { LineChart, Spinner } from '@/components';
-
-const Style = styled('div')(({ theme }) => ({
-  flexGrow: 1,
-  overflow: 'auto',
-  minHeight: '100%',
-  paddingBottom: theme.spacing(10),
-  [theme.breakpoints.up('lg')]: {
-    paddingLeft: theme.spacing(6),
-    paddingRight: theme.spacing(2),
-  },
-}));
+import { PageStyle } from '@/pages/page.style';
 
 const ChartPage = () => {
   const { isLoading, error, data } = useDataQuery(false);
 
-  if (isLoading) {
+  if (isLoading || !data) {
     return (
       <Container>
         <Spinner />
@@ -47,11 +37,8 @@ const ChartPage = () => {
   const { houses, weathers, plants, prices } =
     transformDataForLineChart(data);
 
-  // console.log('plants', plants);
-  // console.log('houses', houses);
-
   return (
-    <Style>
+    <PageStyle>
       <Container maxWidth="xl">
         <Box sx={{ pb: 5, pt: 4 }}>
           <Typography variant="h4">
@@ -71,8 +58,6 @@ const ChartPage = () => {
               <LineChart
                 series={houses}
                 xAxisData={weathers}
-                yTitle="Потребление"
-                xTitle="Температура"
               />
             </Card>
           </Grid>
@@ -87,8 +72,6 @@ const ChartPage = () => {
               <LineChart
                 series={plants}
                 xAxisData={prices}
-                yTitle="Потребление"
-                xTitle="Цена на кирпич"
               />
             </Card>
           </Grid>
@@ -98,21 +81,18 @@ const ChartPage = () => {
                 variant="h6"
                 sx={{ textAlign: 'center' }}
               >
-                Потребление жилых домов от температуры
-                воздуха
+                Общее потребление
               </Typography>
               <LineChart
                 series={series}
                 xAxisData={dates}
-                yTitle="Потребление"
-                xTitle="Цена на кирпич"
-                stacked={true}
+                stacked
               />
             </Card>
           </Grid>
         </Grid>
       </Container>
-    </Style>
+    </PageStyle>
   );
 };
 

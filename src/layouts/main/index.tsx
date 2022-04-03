@@ -1,16 +1,36 @@
 import React, { useState } from 'react';
 import { Outlet } from 'react-router-dom';
-import { createTheme, CssBaseline, styled, ThemeProvider } from '@mui/material';
+import {
+  createTheme,
+  CssBaseline,
+  styled,
+  ThemeProvider,
+} from '@mui/material';
 import { Header, Sidebar } from '@/components';
+import {
+  green,
+  purple,
+  cyan,
+  teal,
+} from '@mui/material/colors';
 
 const RootStyle = styled('div')({
   display: 'flex',
   minHeight: '100%',
   overflow: 'hidden',
-  flexDirection: 'column'
+  flexDirection: 'column',
 });
 
-const theme = createTheme();
+const theme = createTheme({
+  palette: {
+    primary: {
+      main: purple[300],
+    },
+    secondary: {
+      main: teal[300],
+    },
+  },
+});
 
 const MainLayout = () => {
   const [isOpen, setOpen] = useState(false);

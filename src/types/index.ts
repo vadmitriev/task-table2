@@ -10,7 +10,8 @@ interface PlantConsumption {
   Price: number;
 }
 
-export type Consumption = HouseConsumption & PlantConsumption;
+export type Consumption = HouseConsumption &
+  PlantConsumption;
 
 export interface Consumer {
   ConsumerId: number;
@@ -23,21 +24,22 @@ export interface Data {
   plants: Consumer[];
 }
 
-type ConsumptionType = 'house' | 'plant';
-
-export interface SimpleItem {
-  id: number;
-  name: string;
-  type: ConsumptionType;
-  consumptions: Consumption[];
+export enum ConsumerType {
+  house,
+  plant,
 }
 
-export interface DateItem {
-  date: string;
+export interface TableCellType {
+  date: Date;
+  consumption: number;
+  price?: number | null;
+  weather?: number | null;
+}
+
+export interface TableDataType {
   id: number;
   name: string;
-  type: ConsumptionType;
-  price: number;
-  consumption: number;
-  weather: number;
+  type: ConsumerType;
+  total: number;
+  data: TableCellType[];
 }

@@ -1,6 +1,14 @@
 import React from 'react';
 
-import { Box, IconButton, Toolbar, Typography, Link, AppBar } from '@mui/material';
+import {
+  Box,
+  IconButton,
+  Toolbar,
+  Typography,
+  Link,
+  AppBar,
+  useTheme,
+} from '@mui/material';
 
 import MenuIcon from '@mui/icons-material/Menu';
 
@@ -12,7 +20,11 @@ interface HeaderProps {
   toggleSidebar: () => void;
 }
 
-const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
+const Header: React.FC<HeaderProps> = ({
+  toggleSidebar,
+}) => {
+  const theme = useTheme();
+
   return (
     <AppBar position="static">
       <Toolbar>
@@ -22,16 +34,28 @@ const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
           aria-label="open drawer"
           onClick={toggleSidebar}
           sx={{
-            marginRight: '36px'
+            marginRight: '36px',
           }}
         >
           <MenuIcon />
         </IconButton>
         <Link href="/" color="inherit" underline="none">
-          <IconButton color="inherit" component={RouteLink} to="/">
-            <Box component="img" src={logo} sx={{ width: 40, height: 40 }} />
+          <IconButton
+            color="inherit"
+            component={RouteLink}
+            to="/"
+          >
+            <Box
+              component="img"
+              src={logo}
+              sx={{ width: 40, height: 40 }}
+            />
           </IconButton>
-          <Typography variant="h6" component="span" sx={{ flexGrow: 1 }}>
+          <Typography
+            variant="h6"
+            component="span"
+            sx={{ flexGrow: 1 }}
+          >
             Энергопотребление ТЭС
           </Typography>
         </Link>
