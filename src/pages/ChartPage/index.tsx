@@ -3,7 +3,6 @@ import {
   Box,
   Container,
   Typography,
-  styled,
   Grid,
   Card,
 } from '@mui/material';
@@ -48,46 +47,26 @@ const ChartPage = () => {
         <Grid container spacing={3} justifyContent="center">
           <Grid item sm={12} md={5}>
             <Card sx={{ padding: 2 }}>
-              <Typography
-                variant="h6"
-                sx={{ textAlign: 'center' }}
-              >
-                Потребление жилых домов от температуры
-                воздуха
+              <Typography variant="h6" sx={{ textAlign: 'center' }}>
+                Потребление жилых домов от температуры воздуха
               </Typography>
-              <LineChart
-                series={houses}
-                xAxisData={weathers}
-              />
+              <LineChart series={houses} xAxisData={weathers} />
             </Card>
           </Grid>
           <Grid item sm={12} md={5}>
             <Card sx={{ padding: 2 }}>
-              <Typography
-                variant="h6"
-                sx={{ textAlign: 'center' }}
-              >
+              <Typography variant="h6" sx={{ textAlign: 'center' }}>
                 Потребление заводов от цены на кирпич
               </Typography>
-              <LineChart
-                series={plants}
-                xAxisData={prices}
-              />
+              <LineChart series={plants} xAxisData={prices} />
             </Card>
           </Grid>
           <Grid item sm={12} md={10}>
             <Card sx={{ padding: 2 }}>
-              <Typography
-                variant="h6"
-                sx={{ textAlign: 'center' }}
-              >
+              <Typography variant="h6" sx={{ textAlign: 'center' }}>
                 Общее потребление
               </Typography>
-              <LineChart
-                series={series}
-                xAxisData={dates}
-                stacked
-              />
+              <LineChart series={series} xAxisData={dates} stacked />
             </Card>
           </Grid>
         </Grid>

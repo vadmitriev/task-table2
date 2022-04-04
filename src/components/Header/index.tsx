@@ -7,7 +7,6 @@ import {
   Typography,
   Link,
   AppBar,
-  useTheme,
 } from '@mui/material';
 
 import MenuIcon from '@mui/icons-material/Menu';
@@ -20,11 +19,7 @@ interface HeaderProps {
   toggleSidebar: () => void;
 }
 
-const Header: React.FC<HeaderProps> = ({
-  toggleSidebar,
-}) => {
-  const theme = useTheme();
-
+const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
   return (
     <AppBar position="static">
       <Toolbar>
@@ -40,11 +35,7 @@ const Header: React.FC<HeaderProps> = ({
           <MenuIcon />
         </IconButton>
         <Link href="/" color="inherit" underline="none">
-          <IconButton
-            color="inherit"
-            component={RouteLink}
-            to="/"
-          >
+          <IconButton color="inherit" component={RouteLink} to="/">
             <Box
               component="img"
               src={logo}

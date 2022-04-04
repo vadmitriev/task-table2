@@ -1,29 +1,42 @@
 import React from 'react';
-import { Box, Button, Container, styled, Typography } from '@mui/material';
+import {
+  Box,
+  Button,
+  Container,
+  Typography,
+  useTheme,
+} from '@mui/material';
 import { Link as RouterLink } from 'react-router-dom';
 
-const RootStyle = styled('div')(({ theme }) => ({
-  display: 'flex',
-  minHeight: '100%',
-  alignItems: 'center',
-  paddingTop: theme.spacing(15),
-  paddingBottom: theme.spacing(10)
-}));
+import { PageStyle } from '@/pages/page.style';
 
 const NotFoundPage = ({ text = '' }) => {
+  const theme = useTheme();
+
   return (
-    <RootStyle>
-      <Container>
-        <Box sx={{ maxWidth: 550, margin: 'auto', textAlign: 'center' }}>
-          <Typography variant="h3" paragraph>
+    <PageStyle>
+      <Container sx={{ paddingTop: theme.spacing(10) }}>
+        <Box
+          sx={{ maxWidth: 550, margin: 'auto', textAlign: 'center' }}
+        >
+          <Typography
+            variant="h3"
+            paragraph
+            sx={{ paddingBottom: theme.spacing(3) }}
+          >
             {text}
           </Typography>
-          <Button to="/" size="large" variant="contained" component={RouterLink}>
+          <Button
+            to="/"
+            size="large"
+            variant="contained"
+            component={RouterLink}
+          >
             На главную
           </Button>
         </Box>
       </Container>
-    </RootStyle>
+    </PageStyle>
   );
 };
 

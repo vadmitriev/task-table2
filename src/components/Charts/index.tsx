@@ -1,16 +1,4 @@
 import React from 'react';
-//import { Typography } from '@mui/material';
-// import Chart from 'react-apexcharts';
-// import {
-//   LineChart,
-//   Line,
-//   XAxis,
-//   YAxis,
-//   CartesianGrid,
-//   Tooltip,
-//   Legend,
-//   ResponsiveContainer
-// } from 'recharts';
 
 import {
   Chart as ChartJS,
@@ -31,7 +19,6 @@ import { randomRGB, RGBAFromRGB } from '@/utils/colors';
 type Series = {
   name: string;
   data: string[] | number[];
-  // data: any[];
 };
 
 interface LineChartProps {
@@ -75,7 +62,7 @@ const LineChart: React.FC<LineChartProps> = ({
 
   const data = {
     labels: xAxisData.sort((a, b) => a - b),
-    datasets: series.map((s, idx) => {
+    datasets: series.map((s) => {
       const color = randomRGB();
       const rgba = RGBAFromRGB(color, 0.5);
 
@@ -90,7 +77,7 @@ const LineChart: React.FC<LineChartProps> = ({
   };
 
   // @ts-ignore
-  return <Line options={chartOptions} data={data} />;
+  return <Line type="line" options={chartOptions} data={data} />;
 };
 
 export default LineChart;

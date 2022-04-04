@@ -1,18 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Spinner, Table } from '@/components';
 import useDataQuery from '@/hooks/useDataQuery';
-import {
-  Box,
-  Card,
-  Chip,
-  Container,
-  TextField,
-  Typography,
-} from '@mui/material';
+import { Card, Container } from '@mui/material';
 
-import { Delete, Done } from '@mui/icons-material';
-
-import { DatePicker, LocalizationProvider } from '@mui/lab';
+import { LocalizationProvider } from '@mui/lab';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import ruLocale from 'date-fns/locale/ru';
 
@@ -21,30 +12,20 @@ import {
   getMinDate,
   transformDataForTable,
 } from '@/utils/transformData';
-import {
-  ConsumerType,
-  TableCellType,
-  TableDataType,
-} from '@/types';
+import { ConsumerType, TableCellType, TableDataType } from '@/types';
 
 import { PageStyle } from '@/pages/page.style';
 import { calcTotal, isDateBetween } from '@/utils';
-
-const localeMask = '__.__.____';
+import ControlPanel from '@/pages/MainPage/components/ControlPanel';
 
 const MainPage = () => {
   const { isLoading, error, data } = useDataQuery(false);
-  const [startDate, setStartDate] = useState<Date | null>(
-    null,
-  );
+  const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
 
-  const [tableData, setTableData] = useState<
-    TableDataType[] | null
-  >(null);
-  const [initTableData, setInitTableData] = useState<
-    TableDataType[] | null
-  >(null);
+  const [tableData, setTableData] = useState<TableDataType[] | null>(
+    null,
+  );
 
   const [consumerStatus, setConsumerStatus] = useState({
     [ConsumerType.house]: true,
@@ -72,32 +53,33 @@ const MainPage = () => {
     const formattedData = transformDataForTable(data);
 
     setTableData(formattedData);
-    setInitTableData(formattedData);
   }, [data]);
 
   useEffect(() => {
-    if (!initTableData || !startDate || !endDate) return;
+    if (!tableData || !startDate || !endDate) return;
 
-    const newTableData = initTableData.filter(
-      (item) => consumerStatus[item.type],
-    );
+    const newTableData = tableData.map((item) => {
+      item.visible = consumerStatus[item.type];
+      return item;
+    });
     setTableData(filterByDate(newTableData));
   }, [consumerStatus, startDate, endDate]);
 
   const filterByDate = (oldData: TableDataType[]) => {
-    if (!startDate || !endDate) return oldData;
+    if (!startDate || !endDate) {
+      return oldData;
+    }
 
     const newData: TableDataType[] = oldData.map((item) => {
-      const newDataItem: any = item.data.filter(
-        (dataItem) => {
-          const isOk = isDateBetween(
-            dataItem.date,
-            startDate,
-            endDate,
-          );
-          if (isOk) return dataItem;
-        },
-      );
+      const newDataItem: any = item.data.map((dataItem) => {
+        dataItem.visible = isDateBetween(
+          dataItem.date,
+          startDate,
+          endDate,
+        );
+        return dataItem;
+      });
+
       return {
         ...item,
         data: newDataItem,
@@ -120,30 +102,24 @@ const MainPage = () => {
   };
 
   const handleConsumerTypeClick = (type: ConsumerType) => {
-    const newStatus = !consumerStatus[type];
     setConsumerStatus({
       ...consumerStatus,
-      [type]: newStatus,
+      [type]: !consumerStatus[type],
     });
   };
 
-  const consumers: { type: ConsumerType; text: string }[] =
-    [
-      {
-        type: ConsumerType.house,
-        text: 'Дом',
-      },
-      {
-        type: ConsumerType.plant,
-        text: 'Завод',
-      },
-    ];
-
-  const columns = [
-    'Название',
-    'Тип',
-    'Потребление за период',
+  const consumers: { type: ConsumerType; text: string }[] = [
+    {
+      type: ConsumerType.house,
+      text: 'Дом',
+    },
+    {
+      type: ConsumerType.plant,
+      text: 'Завод',
+    },
   ];
+
+  const columns = ['Название', 'Тип', 'Потребление за период'];
 
   const insideColumns = [
     {
@@ -156,8 +132,21 @@ const MainPage = () => {
     },
   ];
 
-  const handleRowChange = () => {
-    console.log('change');
+  const handleRowChange = (
+    id: number,
+    index: number,
+    newItem: TableCellType,
+  ) => {
+    if (!tableData) return;
+
+    const newTableData = tableData.map((dataItem) => {
+      if (dataItem.id === id) {
+        dataItem.data[index] = { ...newItem };
+      }
+      return dataItem;
+    });
+
+    setTableData(newTableData);
   };
 
   return (
@@ -167,72 +156,15 @@ const MainPage = () => {
         locale={ruLocale}
       >
         <Container maxWidth="xl">
-          <Box sx={{ mb: 4, pt: 4 }}>
-            <Typography variant="h4">
-              Данные по энергопотреблению
-            </Typography>
-            <Box sx={{ pb: 3, pt: 2 }}>
-              <DatePicker
-                label="Начальная дата"
-                value={startDate}
-                mask={localeMask}
-                onChange={handleStartDate}
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    size="small"
-                    sx={{ width: 200, mr: 2 }}
-                  />
-                )}
-              />
-              <DatePicker
-                label="Конечная дата"
-                value={endDate}
-                mask={localeMask}
-                onChange={handleEndDate}
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    size="small"
-                    sx={{ width: 200, mr: 2 }}
-                  />
-                )}
-              />
-            </Box>
-            <Box>
-              <Typography
-                sx={{
-                  display: 'inline-block',
-                  mr: 1,
-                  mb: 3,
-                }}
-              >
-                Выбор потребителя:
-              </Typography>
-              {consumers.map((consumer) => (
-                <Chip
-                  key={consumer.type}
-                  sx={{ mr: 1 }}
-                  onClick={() =>
-                    handleConsumerTypeClick(consumer.type)
-                  }
-                  label={consumer.text}
-                  color={
-                    consumerStatus[consumer.type]
-                      ? 'primary'
-                      : 'default'
-                  }
-                  deleteIcon={
-                    consumerStatus[consumer.type] ? (
-                      <Done />
-                    ) : (
-                      <Delete />
-                    )
-                  }
-                />
-              ))}
-            </Box>
-          </Box>
+          <ControlPanel
+            consumers={consumers}
+            startDate={startDate}
+            endDate={endDate}
+            handleStartDate={handleStartDate}
+            handleEndDate={handleEndDate}
+            handleConsumerTypeClick={handleConsumerTypeClick}
+            consumerStatus={consumerStatus}
+          />
           <Card>
             <Table
               rows={tableData}

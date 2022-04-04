@@ -8,10 +8,9 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  Typography,
 } from '@mui/material';
 
-import { ConsumerType, TableDataType } from '@/types';
+import { ConsumerType, TableCellType, TableDataType } from '@/types';
 
 import Row from './TableRow';
 
@@ -24,7 +23,11 @@ interface TableProps {
   rows: TableDataType[] | null;
   columns: string[];
   insideColumns: InsideColumns[];
-  onRowChange: () => void;
+  onRowChange: (
+    id: number,
+    dataIndex: number,
+    item: TableCellType,
+  ) => void;
 }
 
 const Table: React.FC<TableProps> = ({
@@ -34,6 +37,7 @@ const Table: React.FC<TableProps> = ({
   onRowChange,
 }) => {
   if (!rows) return null;
+
   return (
     <TableContainer component={Paper}>
       <MuiTable aria-label="collapsible table" stickyHeader>
@@ -47,13 +51,17 @@ const Table: React.FC<TableProps> = ({
         </TableHead>
         <TableBody>
           {rows &&
-            rows.map((row) => (
-              <Row
-                key={row.id}
-                row={row}
-                columns={insideColumns}
-              />
-            ))}
+            rows.map(
+              (row) =>
+                row.visible && (
+                  <Row
+                    key={row.id}
+                    row={row}
+                    columns={insideColumns}
+                    onChange={onRowChange}
+                  />
+                ),
+            )}
         </TableBody>
       </MuiTable>
     </TableContainer>

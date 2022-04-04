@@ -7,12 +7,8 @@ import {
   ThemeProvider,
 } from '@mui/material';
 import { Header, Sidebar } from '@/components';
-import {
-  green,
-  purple,
-  cyan,
-  teal,
-} from '@mui/material/colors';
+import { purple, teal } from '@mui/material/colors';
+import ErrorBoundary from '@/components/ErrorBoundary';
 
 const RootStyle = styled('div')({
   display: 'flex',
@@ -41,12 +37,14 @@ const MainLayout = () => {
 
   return (
     <ThemeProvider theme={theme}>
-      <RootStyle>
-        <CssBaseline />
-        <Header toggleSidebar={handleSidebar} />
-        <Sidebar open={isOpen} toggle={handleSidebar} />
-        <Outlet />
-      </RootStyle>
+      <ErrorBoundary>
+        <RootStyle>
+          <CssBaseline />
+          <Header toggleSidebar={handleSidebar} />
+          <Sidebar open={isOpen} toggle={handleSidebar} />
+          <Outlet />
+        </RootStyle>
+      </ErrorBoundary>
     </ThemeProvider>
   );
 };

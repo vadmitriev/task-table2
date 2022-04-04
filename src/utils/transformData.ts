@@ -10,25 +10,25 @@ import { calcTotal } from '@/utils/index';
 export const transformDataForLineChart = (data: Data) => {
   const { houses, plants } = data;
 
-  const weathers = houses[0].consumptions.map((c) =>
-    c.Weather.toFixed(0),
+  const weathers = houses[0].consumptions.map(
+    (c) => Math.round(c.Weather * 100) / 100,
   );
 
-  const prices = plants[0].consumptions.map((c) =>
-    c.Price.toFixed(0),
+  const prices = plants[0].consumptions.map(
+    (c) => Math.round(c.Price * 100) / 100,
   );
 
   const housesData = houses.map((house) => ({
     name: house.Name,
-    data: house.consumptions.map((c) =>
-      c.Consumption.toFixed(0),
+    data: house.consumptions.map(
+      (c) => Math.round(c.Consumption * 100) / 100,
     ),
   }));
 
   const plantsData = plants.map((plant) => ({
     name: plant.Name,
-    data: plant.consumptions.map((c) =>
-      c.Consumption.toFixed(0),
+    data: plant.consumptions.map(
+      (c) => Math.round(c.Consumption * 100) / 100,
     ),
 
     price: plant.consumptions.map((c) => c.Price),
@@ -49,9 +49,7 @@ export const transformDataForAreaChart = (data: Data) => {
   let datesMap = new Map<string, number>();
   const dates = plants[0].consumptions.map((c, idx) => {
     datesMap.set(c.Date, idx);
-    return new Date(
-      Date.parse(c.Date),
-    ).toLocaleDateString();
+    return new Date(Date.parse(c.Date)).toLocaleDateString();
   });
 
   let series: {
@@ -66,7 +64,7 @@ export const transformDataForAreaChart = (data: Data) => {
     });
   });
 
-  houses.forEach((house, idx, arr) => {
+  houses.forEach((house) => {
     datesMap.forEach((value, key) => {
       const dateExists = house.consumptions.find(
         (c) => c.Date === key,
@@ -135,20 +133,17 @@ export const transformDataForTable = (
 
   const result: TableDataType[] = [];
 
-  const formTableData = (
-    arr: Consumer[],
-    type: ConsumerType,
-  ) => {
+  const formTableData = (arr: Consumer[], type: ConsumerType) => {
     arr.forEach((consumer) => {
-      const dataArray: TableCellType[] =
-        consumer.consumptions.map((c) => ({
+      const dataArray: TableCellType[] = consumer.consumptions.map(
+        (c) => ({
           date: new Date(Date.parse(c.Date)),
-          consumption: c.Consumption,
-          weather:
-            type === ConsumerType.house ? c.Weather : null,
-          price:
-            type === ConsumerType.plant ? c.Price : null,
-        }));
+          consumption: Math.round(c.Consumption * 100) / 100,
+          weather: type === ConsumerType.house ? c.Weather : null,
+          price: type === ConsumerType.plant ? c.Price : null,
+          visible: true,
+        }),
+      );
 
       const item = {
         type,
@@ -156,32 +151,10 @@ export const transformDataForTable = (
         name: consumer.Name,
         data: dataArray,
         total: calcTotal(dataArray, 'consumption', 0),
+        visible: true,
       };
 
       result.push(item);
-      // const item: TableDataType = {
-      //   type,
-      //   id: consumer.ConsumerId,
-      //   name: consumer.Name,
-      //   data: {
-      //     dates: [],
-      //     consumptions: [],
-      //     prices: type === ConsumerType.plant ? [] : null,
-      //     weathers: type === ConsumerType.house ? [] : null,
-      //   },
-      // };
-      //
-      // consumer.consumptions.forEach((c) => {
-      //   item.data.dates.push(new Date(Date.parse(c.Date)));
-      //   item.data.consumptions.push(c.Consumption);
-      //
-      //   if (type === ConsumerType.plant) {
-      //     item.data.prices?.push(c.Price);
-      //   }
-      //   if (type === ConsumerType.house) {
-      //     item.data.weathers?.push(c.Weather);
-      //   }
-      // });
     });
   };
 

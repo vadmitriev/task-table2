@@ -10,8 +10,7 @@ interface PlantConsumption {
   Price: number;
 }
 
-export type Consumption = HouseConsumption &
-  PlantConsumption;
+export type Consumption = HouseConsumption & PlantConsumption;
 
 export interface Consumer {
   ConsumerId: number;
@@ -34,6 +33,7 @@ export interface TableCellType {
   consumption: number;
   price?: number | null;
   weather?: number | null;
+  visible: boolean;
 }
 
 export interface TableDataType {
@@ -42,4 +42,5 @@ export interface TableDataType {
   type: ConsumerType;
   total: number;
   data: TableCellType[];
+  visible: boolean;
 }

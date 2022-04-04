@@ -1,6 +1,5 @@
 import React from 'react';
 import {
-  Box,
   List,
   ListItemButton,
   ListItemIcon,
@@ -28,7 +27,7 @@ const ListItems = () => {
   const { pathname } = useLocation();
 
   return (
-    <List component="nav">
+    <List>
       {items.map((item) => {
         const isActive = item.link === pathname;
         return (
