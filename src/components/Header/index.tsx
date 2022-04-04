@@ -11,8 +11,6 @@ import {
 
 import MenuIcon from '@mui/icons-material/Menu';
 
-import { Link as RouteLink } from 'react-router-dom';
-
 import logo from '@/assets/favicon.svg';
 
 interface HeaderProps {
@@ -35,7 +33,7 @@ const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
           <MenuIcon />
         </IconButton>
         <Link href="/" color="inherit" underline="none">
-          <IconButton color="inherit" component={RouteLink} to="/">
+          <IconButton color="inherit">
             <Box
               component="img"
               src={logo}

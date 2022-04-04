@@ -19,7 +19,7 @@ import { calcTotal, isDateBetween } from '@/utils';
 import ControlPanel from '@/pages/MainPage/components/ControlPanel';
 
 const MainPage = () => {
-  const { isLoading, error, data } = useDataQuery(false);
+  const { isLoading, error, data } = useDataQuery(true);
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
 
@@ -32,37 +32,29 @@ const MainPage = () => {
     [ConsumerType.plant]: true,
   });
 
-  if (isLoading || !data) {
-    return (
-      <Container>
-        <Spinner />
-      </Container>
-    );
-  }
-
   if (error) {
     throw error;
   }
 
   useEffect(() => {
-    if (!data.houses || !data.plants) return;
+    if (data) {
+      setStartDate(getMinDate(data));
+      setEndDate(getMaxDate(data));
 
-    setStartDate(getMinDate(data));
-    setEndDate(getMaxDate(data));
+      const formattedData = transformDataForTable(data);
 
-    const formattedData = transformDataForTable(data);
-
-    setTableData(formattedData);
+      setTableData(formattedData);
+    }
   }, [data]);
 
   useEffect(() => {
-    if (!tableData || !startDate || !endDate) return;
-
-    const newTableData = tableData.map((item) => {
-      item.visible = consumerStatus[item.type];
-      return item;
-    });
-    setTableData(filterByDate(newTableData));
+    if (tableData) {
+      const newTableData = tableData.map((item) => {
+        item.visible = consumerStatus[item.type];
+        return item;
+      });
+      setTableData(filterByDate(newTableData));
+    }
   }, [consumerStatus, startDate, endDate]);
 
   const filterByDate = (oldData: TableDataType[]) => {
@@ -151,30 +143,34 @@ const MainPage = () => {
 
   return (
     <PageStyle>
-      <LocalizationProvider
-        dateAdapter={AdapterDateFns}
-        locale={ruLocale}
-      >
-        <Container maxWidth="xl">
-          <ControlPanel
-            consumers={consumers}
-            startDate={startDate}
-            endDate={endDate}
-            handleStartDate={handleStartDate}
-            handleEndDate={handleEndDate}
-            handleConsumerTypeClick={handleConsumerTypeClick}
-            consumerStatus={consumerStatus}
-          />
-          <Card>
-            <Table
-              rows={tableData}
-              columns={columns}
-              insideColumns={insideColumns}
-              onRowChange={handleRowChange}
+      {isLoading ? (
+        <Spinner />
+      ) : (
+        <LocalizationProvider
+          dateAdapter={AdapterDateFns}
+          locale={ruLocale}
+        >
+          <Container maxWidth="xl">
+            <ControlPanel
+              consumers={consumers}
+              startDate={startDate}
+              endDate={endDate}
+              handleStartDate={handleStartDate}
+              handleEndDate={handleEndDate}
+              handleConsumerTypeClick={handleConsumerTypeClick}
+              consumerStatus={consumerStatus}
             />
-          </Card>
-        </Container>
-      </LocalizationProvider>
+            <Card>
+              <Table
+                rows={tableData}
+                columns={columns}
+                insideColumns={insideColumns}
+                onRowChange={handleRowChange}
+              />
+            </Card>
+          </Container>
+        </LocalizationProvider>
+      )}
     </PageStyle>
   );
 };

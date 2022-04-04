@@ -17,7 +17,7 @@ import {
 import { PageStyle } from '@/pages/page.style';
 
 const ChartPage = () => {
-  const { isLoading, error, data } = useDataQuery(false);
+  const { isLoading, error, data } = useDataQuery(true);
 
   if (isLoading || !data) {
     return (
