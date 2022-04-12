@@ -11,6 +11,7 @@ import {
   TableHead,
   TableRow,
   Typography,
+  TablePagination,
 } from '@mui/material';
 
 import {
@@ -38,6 +39,8 @@ const CollapsedRow: React.FC<TableCellProps> = ({
 }) => {
   const [open, setOpen] = useState(false);
   const [changedRow, setChangedRow] = useState(row);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [page, setPage] = useState(0);
 
   useEffect(() => {
     if (row) {
@@ -88,28 +91,48 @@ const CollapsedRow: React.FC<TableCellProps> = ({
     </TableHead>
   );
 
+  const Body = () => {
+    const minIndex = page * rowsPerPage;
+    const maxIndex = page * rowsPerPage + rowsPerPage;
+
+    const isBetween = (idx: number) => {
+      return idx >= minIndex && idx <= maxIndex;
+    };
+    return (
+      <TableBody>
+        {changedRow &&
+          changedRow.visible &&
+          changedRow.data.map(
+            (item, idx) =>
+              item.visible &&
+              isBetween(idx) && (
+                <EditableRow
+                  key={item.date.toDateString()}
+                  item={item}
+                  onDone={(newItem) =>
+                    onDone(changedRow.id, idx, newItem)
+                  }
+                />
+              ),
+          )}
+      </TableBody>
+    );
+  };
+
   const onDone = (id: number, index: number, item: TableCellType) => {
     onChange(id, index, item);
   };
 
-  const Body = () => (
-    <TableBody>
-      {changedRow &&
-        changedRow.visible &&
-        changedRow.data.map(
-          (item, idx) =>
-            item.visible && (
-              <EditableRow
-                key={item.date.toDateString()}
-                item={item}
-                onDone={(newItem) =>
-                  onDone(changedRow.id, idx, newItem)
-                }
-              />
-            ),
-        )}
-    </TableBody>
-  );
+  const handleChangePage = (event: unknown, newPage: number) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
 
   return (
     <>
@@ -128,6 +151,15 @@ const CollapsedRow: React.FC<TableCellProps> = ({
                 <Head />
                 <Body />
               </MuiTable>
+              <TablePagination
+                rowsPerPageOptions={[5, 10, 25]}
+                component="div"
+                count={changedRow.data.length}
+                rowsPerPage={rowsPerPage}
+                page={page}
+                onPageChange={handleChangePage}
+                onRowsPerPageChange={handleChangeRowsPerPage}
+              />
             </Box>
           </Collapse>
         </TableCell>
