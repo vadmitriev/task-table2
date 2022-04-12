@@ -25,7 +25,7 @@ interface TableProps {
   insideColumns: InsideColumns[];
   onRowChange: (
     id: number,
-    dataIndex: number,
+    rowKey: number | string,
     item: TableCellType,
   ) => void;
 }

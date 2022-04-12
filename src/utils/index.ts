@@ -3,13 +3,12 @@ export const calcTotal = (
   key: string,
   round: number = 0,
 ) => {
+  const total = arr.reduce(
+    (acc, item) => (item[key] ? acc + Number(item[key]) : null),
+    0,
+  );
   return (
-    Math.round(
-      arr.reduce(
-        (acc, item) => (item[key] ? acc + Number(item[key]) : null),
-        0,
-      ) * Math.pow(10, round),
-    ) / Math.pow(10, round)
+    Math.round(total * Math.pow(10, round)) / Math.pow(10, round)
   );
 };
 

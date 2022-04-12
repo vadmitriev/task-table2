@@ -29,7 +29,11 @@ interface InsideColumns {
 interface TableCellProps {
   row: TableDataType;
   columns: InsideColumns[];
-  onChange: (id: number, index: number, item: TableCellType) => void;
+  onChange: (
+    id: number,
+    key: number | string,
+    item: TableCellType,
+  ) => void;
 }
 
 const CollapsedRow: React.FC<TableCellProps> = ({
@@ -44,7 +48,11 @@ const CollapsedRow: React.FC<TableCellProps> = ({
 
   useEffect(() => {
     if (row) {
-      setChangedRow(row);
+      const newRow = {
+        ...row,
+        data: row.data.filter((item) => item.visible),
+      };
+      setChangedRow(newRow);
     }
   }, [row]);
 
@@ -110,7 +118,11 @@ const CollapsedRow: React.FC<TableCellProps> = ({
                   key={item.date.toDateString()}
                   item={item}
                   onDone={(newItem) =>
-                    onDone(changedRow.id, idx, newItem)
+                    onDone(
+                      changedRow.id,
+                      item.date.toDateString(),
+                      newItem,
+                    )
                   }
                 />
               ),
@@ -119,8 +131,12 @@ const CollapsedRow: React.FC<TableCellProps> = ({
     );
   };
 
-  const onDone = (id: number, index: number, item: TableCellType) => {
-    onChange(id, index, item);
+  const onDone = (
+    id: number,
+    key: number | string,
+    item: TableCellType,
+  ) => {
+    onChange(id, key, item);
   };
 
   const handleChangePage = (event: unknown, newPage: number) => {

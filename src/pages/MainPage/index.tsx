@@ -19,7 +19,7 @@ import { calcTotal, isDateBetween } from '@/utils';
 import ControlPanel from '@/pages/MainPage/components/ControlPanel';
 
 const MainPage = () => {
-  const { isLoading, error, data } = useDataQuery(true);
+  const { isLoading, data } = useDataQuery(true);
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
 
@@ -31,10 +31,6 @@ const MainPage = () => {
     [ConsumerType.house]: true,
     [ConsumerType.plant]: true,
   });
-
-  if (error) {
-    throw error;
-  }
 
   useEffect(() => {
     if (data) {
@@ -69,13 +65,18 @@ const MainPage = () => {
           startDate,
           endDate,
         );
+
         return dataItem;
       });
 
       return {
         ...item,
         data: newDataItem,
-        total: calcTotal(newDataItem, 'consumption', 0),
+        total: calcTotal(
+          newDataItem.filter((item: any) => item.visible),
+          'consumption',
+          0,
+        ),
       };
     });
     return newData;
@@ -126,19 +127,22 @@ const MainPage = () => {
 
   const handleRowChange = (
     id: number,
-    index: number,
+    key: number | string,
     newItem: TableCellType,
   ) => {
     if (!tableData) return;
 
     const newTableData = tableData.map((dataItem) => {
       if (dataItem.id === id) {
+        const index = dataItem.data.findIndex(
+          (item) => item.date.toDateString() === key,
+        );
         dataItem.data[index] = { ...newItem };
       }
       return dataItem;
     });
 
-    setTableData(newTableData);
+    setTableData(filterByDate(newTableData));
   };
 
   return (
